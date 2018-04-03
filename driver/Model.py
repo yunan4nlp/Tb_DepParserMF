@@ -93,6 +93,8 @@ class Decoder(nn.Module):
 
     def forward(self, batch_hidden_state, cut):
         mlp_hidden = self.mlp.forward(batch_hidden_state)
+        if self.training:
+            mlp_hidden = drop_sequence_sharedmask(mlp_hidden, self.config.dropout_mlp)
         outputs = self.output.forward(mlp_hidden)
         outputs = outputs + cut
         return outputs

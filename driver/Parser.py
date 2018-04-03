@@ -139,7 +139,7 @@ class TransitionBasedParser(object):
     def batch_prepare(self):
         if self.b != self.index.size()[0]:
             self.index = Variable(torch.zeros(self.b * 4)).type(torch.LongTensor)
-            index_data = np.array([0] * self.b * 4)
+            index_data = np.array([self.l1] * self.b * 4)
             if self.use_cuda:
                 self.index = self.index.cuda(self.device)
         for idx in range(0, self.b):
@@ -149,7 +149,7 @@ class TransitionBasedParser(object):
                 s0, s1, s2, q0 = cur_states[cur_step].prepare_index(self.l1)
                 offset_x = idx * 4
                 offset_y = idx * (self.l1 + 1)
-                index_data[offset_x + 0] = s0 + offset_y
+                index_data[offset_x] = s0 + offset_y
                 index_data[offset_x + 1] = s1 + offset_y
                 index_data[offset_x + 2] = s2 + offset_y
                 index_data[offset_x + 3] = q0 + offset_y
@@ -181,7 +181,7 @@ class TransitionBasedParser(object):
     def batch_gold_prepare(self):
         self.a = self.max_action_len()
         self.gold_index = Variable(torch.zeros(self.b * self.a * 4)).type(torch.LongTensor)
-        index_data = np.array([0]*self.b *self.a * 4)
+        index_data = np.array([self.l1]*self.b *self.a * 4)
         if self.use_cuda:
             self.gold_index = self.gold_index.cuda(self.device)
         for idx in range(0, self.b):
@@ -195,7 +195,7 @@ class TransitionBasedParser(object):
                     s0, s1, s2, q0 = cur_feats[cur_step]
                     offset_x = idx * 4 + idy * (self.b * 4)
                     offset_y = idx * (self.l1 + 1)
-                    index_data[offset_x + 0] = s0 + offset_y
+                    index_data[offset_x] = s0 + offset_y
                     index_data[offset_x + 1] = s1 + offset_y
                     index_data[offset_x + 2] = s2 + offset_y
                     index_data[offset_x + 3] = q0 + offset_y
